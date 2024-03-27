@@ -39,8 +39,29 @@ function conditional_enqueue_settings_init() {
         'conditional_enqueue_settings_section'
     );
 
-    // Add more settings fields for CSS and JS files here
+    // Placeholder for assets section
+    add_settings_field(
+        'assets_section',
+        'Disable Assets',
+        'conditional_enqueue_settings_assets_section',
+        'conditional-enqueue-settings',
+        'conditional_enqueue_settings_section'
+    );
 }
+function conditional_enqueue_settings_assets_section() {
+    echo '<div id="assets-section-placeholder"></div>';
+}
+
+
+function conditional_enqueue_scripts() {
+    wp_enqueue_script('conditional-enqueue-admin', plugin_dir_url(__FILE__) . 'js/admin.js', array('jquery'), '1.0', true);
+
+    wp_localize_script('conditional-enqueue-admin', 'conditionalEnqueue', array(
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'assets' => retrieve_assets(),
+    ));
+}
+add_action('admin_enqueue_scripts', 'conditional_enqueue_scripts');
 
 /**
  * Renders the settings page.
@@ -53,6 +74,8 @@ function conditional_enqueue_settings_page() {
             <?php
             settings_fields('conditional-enqueue-settings-group');
             do_settings_sections('conditional-enqueue-settings');
+
+            conditional_enqueue_settings_assets_section();
             submit_button();
             ?>
         </form>
@@ -68,14 +91,41 @@ function conditional_enqueue_settings_page_select() {
     $pages = retrive_all_pages();
     if(count($pages) > 0){
         $options = get_option('conditional_enqueue_settings');
-        // print_r($pages); return;
-        echo '<select name="conditional_enqueue_settings[page_select]">';
+        echo '<select name="conditional_enqueue_settings[page_select]" class="conditional_enqueue_settings">';
         foreach ($pages as $key => $page) {
             $selected = (isset($options['page_select']) && is_object($page) && property_exists($page, 'ID') && $options['page_select'] == $page->ID) ? 'selected' : '';
             echo "<option value='{$key}' {$selected}>{$key}</option>";
         }
         echo '</select>';
+
+        print_r(retrieve_assets());
     }
+}
+
+function retrieve_assets(){
+     global $wp_scripts, $wp_styles;
+
+    $styles = array();
+    $scripts = array();
+
+    // print_r($wp_scripts);
+    print_r(wp_scripts());
+
+
+    // Get enqueued styles
+    foreach( $wp_styles->queue as $style ) {
+        $styles[] = ['handle' => $wp_styles->registered[$style]->handle, 'src' => $wp_styles->registered[$style]->src];
+    }
+
+    // Get enqueued scripts
+    foreach( $wp_scripts->queue as $script ) {
+        $scripts[] = ['handle' => $wp_scripts->registered[$script]->handle, 'src' => $wp_scripts->registered[$script]->src];
+    } 
+
+    return array(
+        'styles' => $styles,
+        'scripts' => $scripts
+    );
 }
 
 
