@@ -109,7 +109,7 @@ function retrieve_assets(){
     $scripts = array();
 
     // print_r($wp_scripts);
-    print_r(wp_scripts());
+    // print_r(wp_scripts());
 
 
     // Get enqueued styles
@@ -126,6 +126,62 @@ function retrieve_assets(){
         'styles' => $styles,
         'scripts' => $scripts
     );
+}
+function get_all_assets() {
+    $assets = array(
+        'css' => array(),
+        'js'  => array()
+    );
+
+    // Enqueue styles
+    global $wp_styles;
+    foreach ($wp_styles->queue as $style) {
+        $asset = $wp_styles->registered[$style];
+        if ($asset) {
+            $assets['css'][] = $asset->src;
+        }
+    }
+
+    // Enqueue scripts
+    global $wp_scripts;
+    foreach ($wp_scripts->queue as $script) {
+        $asset = $wp_scripts->registered[$script];
+        if ($asset) {
+            $assets['js'][] = $asset->src;
+        }
+    }
+
+    // Styles added directly in functions.php
+    $styles_added_in_functions = wp_styles();
+    if (!empty($styles_added_in_functions->queue)) {
+        foreach ($styles_added_in_functions->queue as $style) {
+            $assets['css'][] = $styles_added_in_functions->registered[$style]->src;
+        }
+    }
+
+    // Scripts added directly in functions.php
+    $scripts_added_in_functions = wp_scripts();
+    if (!empty($scripts_added_in_functions->queue)) {
+        foreach ($scripts_added_in_functions->queue as $script) {
+            $assets['js'][] = $scripts_added_in_functions->registered[$script]->src;
+        }
+    }
+
+    return $assets;
+}
+
+// Usage
+$all_assets = get_all_assets();
+echo 'CSS Files:<br>';
+foreach ($all_assets['css'] as $css_file) {
+    echo $css_file . '<br>';
+}
+
+echo '<br>';
+
+echo 'JavaScript Files:<br>';
+foreach ($all_assets['js'] as $js_file) {
+    echo $js_file . '<br>';
 }
 
 
