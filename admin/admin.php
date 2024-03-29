@@ -98,7 +98,7 @@ function conditional_enqueue_settings_page_select() {
         }
         echo '</select>';
 
-        print_r(retrieve_assets());
+        // print_r(retrieve_assets());
     }
 }
 
@@ -127,66 +127,11 @@ function retrieve_assets(){
         'scripts' => $scripts
     );
 }
-function get_all_assets() {
-    $assets = array(
-        'css' => array(),
-        'js'  => array()
-    );
 
-    // Enqueue styles
-    global $wp_styles;
-    foreach ($wp_styles->queue as $style) {
-        $asset = $wp_styles->registered[$style];
-        if ($asset) {
-            $assets['css'][] = $asset->src;
-        }
-    }
-
-    // Enqueue scripts
-    global $wp_scripts;
-    foreach ($wp_scripts->queue as $script) {
-        $asset = $wp_scripts->registered[$script];
-        if ($asset) {
-            $assets['js'][] = $asset->src;
-        }
-    }
-
-    // Styles added directly in functions.php
-    $styles_added_in_functions = wp_styles();
-    if (!empty($styles_added_in_functions->queue)) {
-        foreach ($styles_added_in_functions->queue as $style) {
-            $assets['css'][] = $styles_added_in_functions->registered[$style]->src;
-        }
-    }
-
-    // Scripts added directly in functions.php
-    $scripts_added_in_functions = wp_scripts();
-    if (!empty($scripts_added_in_functions->queue)) {
-        foreach ($scripts_added_in_functions->queue as $script) {
-            $assets['js'][] = $scripts_added_in_functions->registered[$script]->src;
-        }
-    }
-
-    return $assets;
-}
-
-// Usage
-$all_assets = get_all_assets();
-echo 'CSS Files:<br>';
-foreach ($all_assets['css'] as $css_file) {
-    echo $css_file . '<br>';
-}
-
-echo '<br>';
-
-echo 'JavaScript Files:<br>';
-foreach ($all_assets['js'] as $js_file) {
-    echo $js_file . '<br>';
-}
 
 
 /**
- * Retive pages
+ * Retrive pages
  */
 function retrive_all_pages(){
     // Retrieve Pages
@@ -201,16 +146,16 @@ function retrive_all_pages(){
 
     // Combine all results into a single array
     $combined_pages = array(
-        'Home Page' => 'IS_FRONT',
-        'Blog Post Index' => 'IS_HOME',
-        'Archive Pages' => 'IS_ARCHIVE',
-        'Category Archive Page' => 'IS_CAT',
-        'Tag Archive Page' => 'IS_TAG',
-        'Author Archive Page' => 'IS_AUTHOR',
-        'Date Archive Page' => 'IS_DATE',
-        'Search Page' => 'IS_SEARCH',
-        'Not Found (404) Page' => 'IS_404',
-        'Single Post' => 'IS_SINGLE'
+        'Home Page' => 'FRONT',
+        'Blog Post Index' => 'HOME',
+        'Archive Pages' => 'ARCHIVE',
+        'Category Archive Page' => 'CAT',
+        'Tag Archive Page' => 'TAG',
+        'Author Archive Page' => 'AUTHOR',
+        'Date Archive Page' => 'DATE',
+        'Search Page' => 'SEARCH',
+        'Not Found (404) Page' => '404',
+        'Single Post' => 'SINGLE'
         
     );
 

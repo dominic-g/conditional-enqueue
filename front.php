@@ -1,13 +1,15 @@
 <?php
 
-function portfolio_scripts() {
+function conditional_enqueue_scripts_current_page() {
     if (isset($_GET['conditional_enqueue_capture_assets']) && $_GET['conditional_enqueue_capture_assets'] === 'true') {
 
     	$slug = get_page_slug();
         global $wp_scripts, $wp_styles;
 
-        $wp_scripts = new WP_Scripts();
-        $wp_styles = new WP_Styles();
+        // $wp_scripts = new WP_Scripts();
+        // $wp_styles = new WP_Styles();
+        // print_r($wp_scripts);
+        // print_r($wp_styles);
 
         $styles = array();
 	    $scripts = array();
@@ -19,6 +21,12 @@ function portfolio_scripts() {
 	    foreach( $wp_scripts->queue as $script ) {
 	        $scripts[] = ['handle' => $wp_scripts->registered[$script]->handle, 'src' => $wp_scripts->registered[$script]->src];
 	    } 
+	    print_r(
+	    	array('conditional_enqueued_assets_'.$slug => array(
+            'scripts' => $scripts,
+            'styles' => $styles,
+        ))
+	    );
 
         update_option('conditional_enqueued_assets_'.$slug, array(
             'scripts' => $scripts,
@@ -28,7 +36,7 @@ function portfolio_scripts() {
         exit;
     }
 }
-add_action('wp_enqueue_scripts', 'portfolio_scripts', 1000000);
+add_action('wp_enqueue_scripts', 'conditional_enqueue_scripts_current_page', 1000000);
 
 
 function get_page_slug(){
@@ -63,4 +71,59 @@ function get_page_slug(){
 	}
 
 	return $current_page_slug;
+}
+
+function get_url_from_slug($slug) {
+    $url = null;
+
+    switch ($slug) {
+        case 'SINGLE':
+            $args = array(
+                'posts_per_page' => 1,
+                'post_status'    => 'publish',
+                'orderby'        => 'date',
+                'order'          => 'DESC'
+            );
+            $first_post = get_posts($args);
+
+            if (!empty($first_post)) {
+                $url = get_permalink($first_post[0]->ID);
+            }
+            break;
+        case 'ARCHIVE':
+            $url = get_post_type_archive_link('post');
+            break;
+        case 'CAT':
+            $url = get_category_link(get_query_var('cat'));
+            break;
+        case 'TAG':
+            $url = get_tag_link(get_query_var('tag_id'));
+            break;
+        case 'AUTHOR':
+            $authors = get_users(array('number' => 1));
+            if (!empty($authors)) {
+                $url = get_author_posts_url($authors[0]->ID);
+            }
+            break;
+        case 'DATE':
+            $url = get_day_link(get_query_var('year'), get_query_var('monthnum'), get_query_var('day'));
+            break;
+        case 'HOME':
+            $url = home_url('/');
+            break;
+        case 'FRONT':
+            $url = home_url();
+            break;
+        case 'SEARCH':
+            $url = home_url('/?s=' . urlencode(get_search_query()));
+            break;
+        case '404':
+            $url = home_url('/404');
+            break;
+        default:
+        	$url = home_url('/');
+            break;
+    }
+
+    return $url;
 }
