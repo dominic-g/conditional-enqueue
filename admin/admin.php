@@ -2,8 +2,12 @@
 
 defined('ABSPATH') or die("Cannot access pages directly.");
 
+require_once WP_PLUGIN_DIR . '/conditional-enqueue/admin/templates/settings.php';
+
 add_action('admin_menu', 'conditional_enqueue_settings_menu');
 add_action('admin_init', 'conditional_enqueue_settings_init');
+
+
 
 /**
  * Adds the settings page to the admin menu.
@@ -14,7 +18,8 @@ function conditional_enqueue_settings_menu() {
         'Conditional Enqueue',
         'manage_options',
         'conditional-enqueue-settings',
-        'conditional_enqueue_settings_page'
+        'conditional_enqueue_render_tabs'
+        // 'conditional_enqueue_settings_page'
     );
 }
 
@@ -54,12 +59,19 @@ function conditional_enqueue_settings_assets_section() {
 
 
 function conditional_enqueue_scripts() {
-    wp_enqueue_script('conditional-enqueue-admin', plugin_dir_url(__FILE__) . 'js/admin.js', array('jquery'), '1.0', true);
 
-    wp_localize_script('conditional-enqueue-admin', 'conditionalEnqueue', array(
-        'ajaxUrl' => admin_url('admin-ajax.php'),
-        'assets' => retrieve_assets(),
-    ));
+
+    $current_screen = get_current_screen();
+    if ($current_screen && $current_screen->id === 'settings_page_conditional-enqueue-settings') {
+        wp_enqueue_script('conditional-enqueue-admin', plugin_dir_url(__FILE__) . 'js/admin.js', array('jquery'), '1.0', true);
+
+        wp_enqueue_style( 'conditional-enqueue-admin', plugin_dir_url(__FILE__) . 'css/admin.css', array(), filemtime(plugin_dir_path(__FILE__) . 'css/admin.css') );
+
+        wp_localize_script('conditional-enqueue-admin', 'conditionalEnqueue', array(
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'assets' => retrieve_assets(),
+        ));
+    }
 }
 add_action('admin_enqueue_scripts', 'conditional_enqueue_scripts');
 
