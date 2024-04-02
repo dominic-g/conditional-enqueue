@@ -1,7 +1,20 @@
 /* Basic */
 @import url("https://use.typekit.net/ovt6ynt.css");
 @import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Oswald:wght@200;300;400;500;600;700&family=Roboto+Condensed:wght@300;400;700&family=Roboto:wght@100;300;400;500;700;900&family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&family=Spectral:wght@200;300;400;500;600;700;800&display=swap");
-
+:root {
+  --color-black: hsl(0, 0%, 10%);
+  --color-darks: hsl(0, 0%, 20%);
+  --color-greys: hsl(0, 0%, 80%);
+  --color-light: hsl(0, 0%, 96%);
+  --color-white: hsl(0, 0%, 100%);
+  --color-blues: hsl(217, 91%, 60%);
+  --shadow-small: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+     0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+     0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+     0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
 body {
   padding: 0;
   margin: 0;
@@ -58,14 +71,14 @@ body {
   text-align: left;
   position: relative;
 }
-.tabs input {
+.tabs input[id^="tab-"] {
   position: absolute;
   opacity: 0;
   margin: 0;
   padding: 0;
 }
 
-.tabs input + label:hover {
+.tabs input[id^="tab-"] + label:hover {
   color: #777;
 }
 .tabs .tabsShadow {
@@ -252,7 +265,7 @@ h2.tab-title.tab-warning {
   background: linear-gradient(70deg, #c51574, #97389b);
 }
 
-.tabs input {
+.tabs input[id^="tab-"] {
   position: relative;
   opacity: 0;
   margin: auto !important;
@@ -307,6 +320,114 @@ span.numit {
   padding: 0;
   color: aliceblue;
   text-shadow: 0.5pt 0.5pt 0.5pt #2d3748;
+}
+
+
+.form-group {
+  position: relative;
+  background: #fff;
+  border-radius: 5px;
+}
+.form-arrow {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.5rem;
+  z-index: 10;
+  font-size: 1.35rem;
+  line-height: inherit;
+  color: hsl(0, 0%, 20%);
+}
+.form .dropdown {
+  position: relative;
+}
+.form .dropdown-select {
+  position: relative;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  cursor: pointer;
+  user-select: none;
+  width: 100%;
+  height: auto;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  outline: none;
+  border-radius: 0.25rem;
+  color: var(--color-black);
+  background-clip: padding-box;
+  background-color: hsl(0, 0%, 100%);
+  box-shadow: var(--shadow-medium);
+  transition: all 0.3s ease-in-out;
+}
+.form .dropdown-menu {
+  position: absolute;
+  display: none;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  border-radius: 0.25rem;
+  background-color: hsl(0, 0%, 100%);
+  box-shadow: var(--shadow-large);
+  transition: all 0.3s ease-in-out;
+}
+.form .dropdown-menu-inner {
+  max-height: 16rem;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.form .dropdown-menu-inner::-webkit-scrollbar {
+  width: 5px;
+  height: auto;
+}
+.form .dropdown-menu-inner::-webkit-scrollbar-thumb {
+  border-radius: 0.25rem;
+  background-color: var(--color-greys);
+  box-shadow: var(--shadow-small);
+}
+.form .dropdown-menu-item {
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: normal;
+  line-height: inherit;
+  cursor: pointer;
+  user-select: none;
+  padding: 0.65rem 1.25rem;
+  background-color: hsl(0, 0%, 100%);
+  transition: all 0.2s ease-in-out;
+}
+.form .dropdown-menu-item:hover {
+  color: var(--color-black);
+  background-color: var(--color-greys);
+}
+.form .dropdown-menu-item.is-select, .form .dropdown-menu-item.is-select:hover {
+  color: hsl(0, 0%, 100%);
+  background-color: var(--color-blues);
+}
+.form .dropdown-menu-search {
+  display: block;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  width: 100%;
+  height: auto;
+  padding: 0.65rem 1.25rem;
+  border: none;
+  outline: none;
+  color: var(--color-black);
+  background-clip: padding-box;
+  background-color: var(--color-light);
+}
+.wrapper-column {
+  max-width: 40rem;
+  height: auto;
+  margin: 0 auto;
+  padding: 5rem 3rem;
+  border-radius: 0.25rem;
+  background-color: hsl(0, 0%, 100%);
+  box-shadow: var(--shadow-medium);
 }
 
 

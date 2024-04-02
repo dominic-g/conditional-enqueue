@@ -22,10 +22,14 @@ function conditional_enqueue_render_tabs(){
       <div class="glider"></div>
       <section class="content">
         <div class="item" id="content-1">
-          <h2 class="tab-title tab-primary">Sweep + Slide Dog Toy</h2>
-          <p>
-            <span class = "numit">1</span> The Sweep + Slide is an indoor dog toy with a sleek base designed to glide across any floor. Not only does this toy stimulate your dog's natural chase instincts, but it also sweeps away floor dust and grime with a replaceable sweeper bottom cover.
+          <h2 class="tab-title tab-primary">Assets Files Dequeueing</h2>
+          <p class="description">
+            <span class = "numit">1</span> Select Page you want to change the files queued
           </p>
+
+          <?php
+            conditional_enqueue_settings_page_select();
+          ?>
         </div>
         <div class="item" id="content-2">
           <h2 class="tab-title tab-success">Tab 2</h2>
