@@ -359,6 +359,7 @@ span.numit {
   background-color: hsl(0, 0%, 100%);
   box-shadow: var(--shadow-medium);
   transition: all 0.3s ease-in-out;
+  box-sizing: border-box;
 }
 .form .dropdown-menu {
   position: absolute;

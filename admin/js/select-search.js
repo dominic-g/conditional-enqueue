@@ -20,7 +20,8 @@ if (form !== null) {
 function createCustomDropdown(dropdown) {
    // Get All Select Options
    // And Convert them from NodeList to Array
-   const options = dropdown.querySelectorAll("option");
+   const options_ = dropdown.querySelectorAll("option[disabled]");
+   const options = dropdown.querySelectorAll("option:not([disabled])");
    const optionsArr = Array.prototype.slice.call(options);
 
    // Create Custom Dropdown Element and Add Class Dropdown
@@ -31,7 +32,7 @@ function createCustomDropdown(dropdown) {
    // Create Element for Selected Option
    const selected = document.createElement("div");
    selected.classList.add("dropdown-select");
-   selected.textContent = optionsArr[0].textContent;
+   selected.textContent = options_[0].textContent;
    customDropdown.appendChild(selected);
 
    // Create Element for Dropdown Menu
