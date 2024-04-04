@@ -1,7 +1,7 @@
 <?php
 
 function conditional_enqueue_scripts_current_page() {
-    if (isset($_GET['conditional_enqueue_capture_assets']) && $_GET['conditional_enqueue_capture_assets'] === 'true') {
+    if (isset($_GET['conditional_enqueue_capture_assets']) && $_GET['conditional_enqueue_capture_assets'] === 'set') {
 
     	$slug = get_page_slug();
         global $wp_scripts, $wp_styles;
@@ -21,22 +21,50 @@ function conditional_enqueue_scripts_current_page() {
 	    foreach( $wp_scripts->queue as $script ) {
 	        $scripts[] = ['handle' => $wp_scripts->registered[$script]->handle, 'src' => $wp_scripts->registered[$script]->src];
 	    } 
-	    print_r(
-	    	array('conditional_enqueued_assets_'.$slug => array(
-            'scripts' => $scripts,
-            'styles' => $styles,
-        ))
-	    );
 
         update_option('conditional_enqueued_assets_'.$slug, array(
             'scripts' => $scripts,
             'styles' => $styles,
         ));
+        print_r(
+            json_encode(
+                ['conditional_enqueued_assets_'.$slug => array(
+                    'scripts' => $scripts,
+                    'styles' => $styles,
+                )]
+            )
+        );
 
         exit;
     }
 }
 add_action('wp_enqueue_scripts', 'conditional_enqueue_scripts_current_page', 1000000);
+
+/*if (isset($_GET['conditional_enqueue_capture_assets'])) {
+    // Start output buffering
+    ob_start();
+
+    // Trigger the wp_enqueue_scripts action
+    do_action('wp_enqueue_scripts');
+
+    // Get the captured output
+    $output = ob_get_clean();
+
+    // Find the position of the JSON string
+    $jsonStart = strpos($output, '{"conditional_enqueued_assets_FRONT"');
+
+    // Extract the JSON part
+    $jsonString = substr($output, $jsonStart);
+
+    // Set the content type header
+    header('Content-Type: application/json');
+
+    // Output the JSON string
+    echo $jsonString;
+
+    // Exit to prevent further output
+    exit;
+}*/
 
 
 function get_page_slug(){
