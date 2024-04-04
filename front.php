@@ -6,10 +6,6 @@ function conditional_enqueue_scripts_current_page() {
     	$slug = get_page_slug();
         global $wp_scripts, $wp_styles;
 
-        // $wp_scripts = new WP_Scripts();
-        // $wp_styles = new WP_Styles();
-        // print_r($wp_scripts);
-        // print_r($wp_styles);
 
         $styles = array();
 	    $scripts = array();
@@ -104,53 +100,49 @@ function get_page_slug(){
 function get_url_from_slug($slug) {
     $url = null;
 
-    switch ($slug) {
-        case 'SINGLE':
-            $args = array(
-                'posts_per_page' => 1,
-                'post_status'    => 'publish',
-                'orderby'        => 'date',
-                'order'          => 'DESC'
-            );
-            $first_post = get_posts($args);
+    if ($slug == 'SINGLE') {
+        $args = array(
+            'posts_per_page' => 1,
+            'post_status'    => 'publish',
+            'orderby'        => 'date',
+            'order'          => 'DESC'
+        );
+        $first_post = get_posts($args);
 
-            if (!empty($first_post)) {
-                $url = get_permalink($first_post[0]->ID);
-            }
-            break;
-        case 'ARCHIVE':
-            $url = get_post_type_archive_link('post');
-            break;
-        case 'CAT':
-            $url = get_category_link(get_query_var('cat'));
-            break;
-        case 'TAG':
-            $url = get_tag_link(get_query_var('tag_id'));
-            break;
-        case 'AUTHOR':
-            $authors = get_users(array('number' => 1));
-            if (!empty($authors)) {
-                $url = get_author_posts_url($authors[0]->ID);
-            }
-            break;
-        case 'DATE':
-            $url = get_day_link(get_query_var('year'), get_query_var('monthnum'), get_query_var('day'));
-            break;
-        case 'HOME':
+        if (!empty($first_post)) {
+            $url = get_permalink($first_post[0]->ID);
+        }
+    } elseif ($slug == 'ARCHIVE') {
+        $url = get_post_type_archive_link('post');
+    } elseif ($slug == 'CAT') {
+        $url = get_category_link(get_query_var('cat'));
+    } elseif ($slug == 'TAG') {
+        $url = get_tag_link(get_query_var('tag_id'));
+    } elseif ($slug == 'AUTHOR') {
+        $authors = get_users(array('number' => 1));
+        if (!empty($authors)) {
+            $url = get_author_posts_url($authors[0]->ID);
+        }
+    } elseif ($slug == 'DATE') {
+        $url = get_day_link(get_query_var('year'), get_query_var('monthnum'), get_query_var('day'));
+    } elseif ($slug == 'HOME') {
+        $url = home_url('/');
+    } elseif ($slug == 'FRONT') {
+        $url = home_url();
+    } elseif ($slug == 'SEARCH') {
+        $url = home_url('/?s=' . urlencode(get_search_query()));
+    } elseif ($slug == '404') {
+        $url = home_url('/404');
+    }  elseif (is_numeric($slug)) {
+        $page_exists = get_post($slug);
+
+        if ($page_exists && $page_exists->post_type == 'page') {
+            $url = get_permalink($slug);
+        }else {
             $url = home_url('/');
-            break;
-        case 'FRONT':
-            $url = home_url();
-            break;
-        case 'SEARCH':
-            $url = home_url('/?s=' . urlencode(get_search_query()));
-            break;
-        case '404':
-            $url = home_url('/404');
-            break;
-        default:
-        	$url = home_url('/');
-            break;
+        }
+    } else {
+        $url = home_url('/');
     }
 
     return $url;
