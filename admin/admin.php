@@ -57,6 +57,36 @@ function conditional_enqueue_settings_assets_section() {
     echo '<div id="assets-section-placeholder"></div>';
 }
 
+add_action('wp_ajax_request_assets_for_page', 'handle_request_assets');
+
+function handle_request_assets(){
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'your_nonce_action')) {
+        wp_send_json_error('Invalid nonce');
+    }
+
+    require_once( ABSPATH . WPINC . '/class-http.php' );
+
+    $url = get_url_from_slug($slug);
+    $params = array(
+        'param1' => 'value1',
+        'param2' => 'value2',
+    );
+    $url = add_query_arg( $params, $url );
+
+    $response = wp_remote_get( $url );
+
+    // Check if the request was successful
+    if ( !is_wp_error( $response ) && $response['response']['code'] == 200 ) {
+        $body = wp_remote_retrieve_body( $response );
+        // Process $body as needed
+    } else {
+        if ( is_wp_error( $response ) ) {
+            $error_message = $response->get_error_message();
+        } else {
+            $http_code = $response['response']['code'];
+        }
+    }
+}
 
 function conditional_enqueue_scripts() {
 
