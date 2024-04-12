@@ -105,6 +105,12 @@ function setSelected(selected, dropdown, menu) {
    selected.textContent = label;
    dropdown.value = value;
 
+   // Create a new 'change' event
+   var event = new Event('change');
+
+   // Dispatch the 'change' event on the select element
+   dropdown.dispatchEvent(event);
+
    // Close the Menu
    // Reset Search Input Value
    // Remove Selected Class from Previously Selected Option

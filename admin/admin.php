@@ -93,7 +93,7 @@ function conditional_enqueue_scripts() {
 
     $current_screen = get_current_screen();
     if ($current_screen && $current_screen->id === 'settings_page_conditional-enqueue-settings') {
-        wp_enqueue_script('conditional-enqueue-admin', plugin_dir_url(__FILE__) . 'js/admin.js', array('jquery'), '1.0', true);
+        wp_enqueue_script('conditional-enqueue-admin', plugin_dir_url(__FILE__) . 'js/admin.js', array('jquery'), filemtime(plugin_dir_path(__FILE__) . 'js/admin.js'), true);
         wp_enqueue_script('conditional-enqueue-select-search', plugin_dir_url(__FILE__) . 'js/select-search.js', [], filemtime(plugin_dir_path(__FILE__) . 'js/select-search.js'), true);
 
         wp_enqueue_style( 'conditional-enqueue-admin', plugin_dir_url(__FILE__) . 'css/admin.css', array(), filemtime(plugin_dir_path(__FILE__) . 'css/admin.css') );
