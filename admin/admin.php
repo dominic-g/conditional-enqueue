@@ -60,20 +60,35 @@ function conditional_enqueue_settings_assets_section() {
 add_action('wp_ajax_request_assets_for_page', 'handle_request_assets');
 
 function handle_request_assets(){
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'your_nonce_action')) {
+
+    print_r($_POST);
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'handle_request_assets')) {
         wp_send_json_error('Invalid nonce');
     }
 
     require_once( ABSPATH . WPINC . '/class-http.php' );
 
+    $slug = isset($_POST['page'])?$_POST['page']:null;
+
     $url = get_url_from_slug($slug);
     $params = array(
-        'param1' => 'value1',
-        'param2' => 'value2',
+        'conditional_enqueue_capture_assets' => 'set',
+        'nonce' => wp_create_nonce('handle_request_assets_call_page'),
     );
+    print_r(PHP_EOL.$url.PHP_EOL);
     $url = add_query_arg( $params, $url );
 
     $response = wp_remote_get( $url );
+
+    $output = isset($response['body'])?$response['body']:null;
+
+    $jsonStart = strpos($output, '{"conditional_enqueued_assets_'.$slug);
+
+    // Extract the JSON part
+    $jsonString = substr($output, $jsonStart);
+
+    $data = json_decode($jsonString, true);
+    print_r($data);
 
     // Check if the request was successful
     if ( !is_wp_error( $response ) && $response['response']['code'] == 200 ) {
@@ -144,37 +159,20 @@ function conditional_enqueue_settings_page_select() {
                     </g>
                 </svg>
             </i></span>
-            <select name="conditional_enqueue_settings[page_select]" class="conditional_enqueue_settings dropdown">
+
+            <select name="conditional_enqueue_settings[page_select]" class="conditional_enqueue_settings dropdown" data-key="<?php echo(esc_attr(wp_create_nonce('handle_request_assets'), 'conditional-enqueue')); ?>">
               
             <?php
                 echo '<option disabled selected>Select Page</option>';
                 foreach ($pages as $key => $page) {
                     $selected = (isset($options['page_select']) && is_object($page) && property_exists($page, 'ID') && $options['page_select'] == $page->ID) ? 'selected' : '';
-                    echo "<option value='".esc_attr($key, 'conditional-enqueue')."' ".esc_html($selected, 'conditional-enqueue').">".esc_html($key, 'conditional-enqueue')."</option>";
+                    echo "<option value='".esc_attr($page, 'conditional-enqueue')."' ".esc_html($selected, 'conditional-enqueue').">".esc_html($key, 'conditional-enqueue')."</option>";
                 }
             ?>
             </select>
         </div>
     </div>
     <?php
-    }else{
-        esc_attr_e("Sorry No Pages have been found", 'conditional-enqueue');
-    }
-}
-function conditional_enqueue_settings_page_select_() {
-    // $pages = get_pages();
-    $pages = retrive_all_pages();
-    if(count($pages) > 0){
-        $options = get_option('conditional_enqueue_settings');
-        echo '<select name="conditional_enqueue_settings[page_select]" class="conditional_enqueue_settings dropdown">';
-        echo '<option disabled selected>Select Page</option>';
-        foreach ($pages as $key => $page) {
-            $selected = (isset($options['page_select']) && is_object($page) && property_exists($page, 'ID') && $options['page_select'] == $page->ID) ? 'selected' : '';
-            echo "<option value='".esc_attr($key, 'conditional-enqueue')."' ".esc_html($selected, 'conditional-enqueue').">".esc_html($key, 'conditional-enqueue')."</option>";
-        }
-        echo '</select>';
-
-        // print_r(retrieve_assets());
     }else{
         esc_attr_e("Sorry No Pages have been found", 'conditional-enqueue');
     }

@@ -1,7 +1,11 @@
 <?php
 
 function conditional_enqueue_scripts_current_page() {
-    if (isset($_GET['conditional_enqueue_capture_assets']) && $_GET['conditional_enqueue_capture_assets'] === 'set') {
+
+    if(
+        isset($_GET['conditional_enqueue_capture_assets']) && $_GET['conditional_enqueue_capture_assets'] === 'set'
+        && isset($_GET['nonce']) 
+    ){
 
     	$slug = get_page_slug();
         global $wp_scripts, $wp_styles;
