@@ -238,15 +238,20 @@ function retrive_all_pages(){
         'Tag Archive Page' => 'TAG',
         'Author Archive Page' => 'AUTHOR',
         'Date Archive Page' => 'DATE',
-        'Search Page' => 'SEARCH',
-        'Not Found (404) Page' => '404'
-        
+        'Search Page' => 'SEARCH',  
     );
 
     $single_post = get_posts(array('post_type' => 'post', 'posts_per_page' => 1));
     if ($single_post) {
         $combined_pages['Single Post'] = 'SINGLE';
     }
+
+
+    $theme_404_template = get_template_directory() . '/404.php';
+    if (file_exists($theme_404_template)) {
+        $combined_pages['Not Found (404) Page'] = '404';
+    }
+
 
     $combined_pages = array_merge($combined_pages, $pages_array);
     return $combined_pages;
