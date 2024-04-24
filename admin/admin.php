@@ -61,7 +61,7 @@ add_action('wp_ajax_request_assets_for_page', 'handle_request_assets');
 
 function handle_request_assets(){
 
-    print_r($_POST);
+    // print_r($_POST);
     if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'handle_request_assets')) {
         wp_send_json_error('Invalid nonce');
     }
@@ -79,20 +79,29 @@ function handle_request_assets(){
     $url = add_query_arg( $params, $url );
 
     $response = wp_remote_get( $url );
+        // print_r($response);die(PHP_EOL.'End'.PHP_EOL);
 
-    $output = isset($response['body'])?$response['body']:null;
-
-    $jsonStart = strpos($output, '{"conditional_enqueued_assets_'.$slug);
-
-    // Extract the JSON part
-    $jsonString = substr($output, $jsonStart);
-
-    $data = json_decode($jsonString, true);
-    print_r($data);
 
     // Check if the request was successful
-    if ( !is_wp_error( $response ) && $response['response']['code'] == 200 ) {
+    if ( !is_wp_error( $response ) && $response['response']['code'] == 200) {
         $body = wp_remote_retrieve_body( $response );
+
+
+        $output = isset($response['body'])?$response['body']:null;
+
+
+        print_r($body.PHP_EOL);
+
+        $jsonStart = strpos($output, '{"conditional_enqueued_assets_'.$slug);
+
+        // Extract the JSON part
+        $jsonString = substr($output, $jsonStart);
+
+        $data = json_decode($jsonString, true);
+
+        print_r(json_encode($data));
+        die(PHP_EOL."end".PHP_EOL);
+        // if(isset($data['']))
         // Process $body as needed
     } else {
         if ( is_wp_error( $response ) ) {
@@ -230,10 +239,14 @@ function retrive_all_pages(){
         'Author Archive Page' => 'AUTHOR',
         'Date Archive Page' => 'DATE',
         'Search Page' => 'SEARCH',
-        'Not Found (404) Page' => '404',
-        'Single Post' => 'SINGLE'
+        'Not Found (404) Page' => '404'
         
     );
+
+    $single_post = get_posts(array('post_type' => 'post', 'posts_per_page' => 1));
+    if ($single_post) {
+        $combined_pages['Single Post'] = 'SINGLE';
+    }
 
     $combined_pages = array_merge($combined_pages, $pages_array);
     return $combined_pages;
