@@ -62,8 +62,8 @@ add_action('wp_ajax_request_assets_for_page', 'handle_request_assets');
 function handle_request_assets(){
 
     // print_r($_POST);
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'handle_request_assets')) {
-        wp_send_json_error('Invalid nonce');
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'handle_request_assetsl')) {
+        wp_send_json_error('Invalid nonce', 400);
     }
 
     require_once( ABSPATH . WPINC . '/class-http.php' );
@@ -101,11 +101,14 @@ function handle_request_assets(){
 
         print_r(json_encode($data));
         die(PHP_EOL."end".PHP_EOL);
+
+        wp_send_json($res);
         // if(isset($data['']))
         // Process $body as needed
     } else {
         if ( is_wp_error( $response ) ) {
             $error_message = $response->get_error_message();
+            wp_send_json_error($error_message);
         } else {
             $http_code = $response['response']['code'];
         }
@@ -238,7 +241,7 @@ function retrive_all_pages(){
         'Tag Archive Page' => 'TAG',
         'Author Archive Page' => 'AUTHOR',
         'Date Archive Page' => 'DATE',
-        'Search Page' => 'SEARCH',  
+        'Search Page' => 'SEARCH' 
     );
 
     $single_post = get_posts(array('post_type' => 'post', 'posts_per_page' => 1));
